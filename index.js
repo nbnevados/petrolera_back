@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const login = require('./routes/login');
-// const consumidores = require('./routes/consumidores');
-// const consumidoresLista = require('./routes/consumidoresLista');
-// const combustibles = require('./routes/combustibles');
+
 const bombas = require('./routes/bombas');
-const registrar = require('./routes/registrar');
 const registrarDispositivo = require('./routes/registrarDispositivo');
 const sql = require('mssql');
+
+const medirRoutes = require('./routes/medir');
+const cargaRoutes = require('./routes/registrar');
+const sobranteRoutes = require('./routes/sobrante');
 
 require('dotenv').config();
 
@@ -22,9 +23,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/login', login);
 app.use('/api/bombas', bombas);
 
+app.use('/api/medir', medirRoutes);
 app.use('/api/dispositivo', registrarDispositivo);
 
-app.use('/api/registrar', registrar);
+app.use('/api/carga', cargaRoutes);
+app.use('/api/sobrante', sobranteRoutes);
+
+app.use((err, req, res, next) => {
+  console.error('Error no manejado:', err);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

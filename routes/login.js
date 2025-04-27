@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { getConnection, sql } = require('../config/db');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+const JWT_TIME = process.env.JWT_TIME;
 router.post('/', async (req, res) => {
 
   const {user, pass } = await req.body;
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
       },
       JWT_SECRET,
       {
-        expiresIn: '1h'
+        expiresIn: JWT_TIME
       }
     );
 
