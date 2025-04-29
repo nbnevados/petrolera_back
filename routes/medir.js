@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middleware/auth');
-const { validateMedir } = require('../validators/medirSchema');
+const { medirValidationRules } = require('../validators/medirSchema');
+const { validarCampos } = require('../middleware/carga');
+const { registrarMedir } = require('../controllers/medirController');
 
-router.post('/', verifyToken, validateMedir, (req, res) => {
-  res.json({ message: 'Medida registrada correctamente' });
-});
+router.post(
+  '/', 
+  verifyToken,
+  medirValidationRules,
+  validarCampos,
+  registrarMedir
+);
 
 module.exports = router;

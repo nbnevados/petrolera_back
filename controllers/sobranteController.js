@@ -1,33 +1,19 @@
 const { getConnection, sql } = require('../config/db');
 
-
 const crearSobrante = async (req, res) => {
+
   try {
     const { carga_id, evidencia, litros } = req.body;
-
-    const combData = {
-      carga_id,
-      evidencia,
-      litros
-    };
-
+  
     const pool = await getConnection();
-    const result = await pool.request()
-      .input('carga_id', sql.Int, combData.carga_id)
-      .input('evidencia', sql.VarBinary, combData.evidencia)
-      .input('litros', sql.Int, combData.litros)
-      .query(`
-        INSERT INTO [Combustible].[dbo].[Sobrante] 
-          (carga_id, evidencia, litros) 
-        OUTPUT INSERTED.RowId 
-        VALUES (@carga_id, @evidencia, @litros)
-      `);
-
-    const nuevoRowId = result.recordset[0].RowId;
+    await pool.request()
+    .input('carga_id', sql.Int, carga_id)
+    .input('evidencia', sql.VarBinary, Buffer.from(evidencia, 'base64'))
+    .input('litros', sql.Int, litros)
+    .query('INSERT INTO [Combustible].[dbo].[Sobrante] (carga_id, evidencia, litros) VALUES (@carga_id, @evidencia, @litros)');
 
     res.status(201).json({
       message: 'Registro exitoso',
-      rowId: nuevoRowId
     });
 
   } catch (error) {
@@ -36,6 +22,4 @@ const crearSobrante = async (req, res) => {
   }
 };
 
-module.exports = {
-  crearSobrante
-};
+module.exports = { crearSobrante };

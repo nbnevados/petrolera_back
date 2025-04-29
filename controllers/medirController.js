@@ -4,7 +4,9 @@ const { obtenerFechaSQL } = require('../helpers/date');
 const registrarMedir = async (req, res) => {
   
   const dataBody = {
-    ...req.body,
+    cms: req.body.cms,
+    bomba: req.body.bomba,
+    usuario: req.body.usuario,
     fecha: obtenerFechaSQL(),
   }
 
@@ -13,9 +15,9 @@ const registrarMedir = async (req, res) => {
     await pool.request()
       .input('cms', sql.Int, dataBody.cms)
       .input('fecha', sql.DateTime, dataBody.fecha)
-      .input('bomba', sql.Int, dataBody.bomba)
+      .input('bomba', sql.TinyInt, dataBody.bomba)
       .input('usuario', sql.Int, dataBody.usuario)
-      .query('INSERT INTO medir (id, vara) VALUES (@uuid, @vara)');
+      .query('INSERT INTO [Combustible].[dbo].[Mediciones] (Cms, Fecha, Bomba, Usuario) VALUES (@cms, @fecha, @bomba, @usuario)');
     
     return res.status(201).json({ message: 'Registro exitoso' });
   

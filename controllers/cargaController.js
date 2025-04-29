@@ -3,7 +3,7 @@ const { obtenerFechaSQL } = require('../helpers/date');
 
 const crearCarga = async (req, res) => {
   try {
-    const { litros, sobra, factura, bomba, evidencia, user } = req.body;
+    const { litros, sobra, factura, bomba, user } = req.body;
 
     const combData = {
       litros,
@@ -22,14 +22,11 @@ const crearCarga = async (req, res) => {
       .input('bomba', sql.TinyInt, combData.bomba)
       .input('user', sql.Int, combData.user)
       .input('createdAt', sql.DateTime, combData.createdAt)
-      .query(`
-        INSERT INTO [Combustible].[dbo].[Carga] 
-          (Litros, Sobra, Factura, Bomba, Usuario, Fecha) 
-        OUTPUT INSERTED.RowId 
-        VALUES (@litros, @sobra, @factura, @bomba, @user, @createdAt)
-      `);
+      .query(`INSERT INTO [Combustible].[dbo].[Carga] (Litros, Sobra, Factura, Bomba, Usuario, Fecha) 
+        OUTPUT INSERTED.Id 
+        VALUES (@litros, @sobra, @factura, @bomba, @user, @createdAt)`);
 
-    const nuevoRowId = result.recordset[0].RowId;
+    const nuevoRowId = result.recordset[0].Id;
 
     res.status(201).json({
       message: 'Registro exitoso',

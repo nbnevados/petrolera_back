@@ -1,15 +1,9 @@
-const Joi = require('joi');
+const { body } = require('express-validator');
 
-const schema = Joi.object({
-  vara: Joi.number().required(),
-});
+const medirValidationRules = [
+  body('cms').isInt({ min: 1 }).withMessage('Centímetros debe ser un número positivo.'),
+  body('bomba').isInt({ min: 1 }).withMessage('Bomba debe ser un número positivo.'),
+  body('usuario').isInt({ min: 1 }).withMessage('Usuario debe ser un número positivo.')
+];
 
-function validateMedir(req, res, next) {
-  const { error } = schema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
-  next();
-}
-
-module.exports = { validateMedir };
+module.exports = { medirValidationRules };

@@ -21,10 +21,11 @@ router.post('/', verifyToken, async (req, res) => {
       .input('rowId', sql.Int, rowId)
       .input('descDispositivo', sql.VarChar, descDispositivo)
       .input('tipoConexion', sql.VarChar, tipoConexion)
-      .query('INSERT INTO [Combustible].[dbo].[Dispositivos] (IDRegistro, DescDispositivo, TipoConexion) VALUES (@rowId, @descDispositivo, @tipoConexion)');
+      .query('INSERT INTO [Combustible].[dbo].[Dispositivos] (ID, DescDispositivo, TipoConexion) VALUES (@rowId, @descDispositivo, @tipoConexion)');
 
     res.status(200).json({
-      message: result
+      message: result,
+      result: res
     });
 
   } catch (err) {
