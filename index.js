@@ -19,7 +19,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:4200'
+  origin: 'https://petrolera-front.vercel.app'
 }));
 
 app.use(express.json());
