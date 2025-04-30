@@ -5,12 +5,11 @@ const { getConnection, sql } = require('../config/db');
 
 router.post('/', verifyToken, async (req, res) => {
   const { 
-    rowId, 
     descDispositivo,
     tipoConexion
   } = await req.body;
 
-  if (!rowId || !tipoConexion) {
+  if (!descDispositivo || !tipoConexion) {
     return res.status(400).json({ error: 'Faltan parámetros requeridos' });
   }
 
@@ -18,15 +17,16 @@ router.post('/', verifyToken, async (req, res) => {
 
     const pool = await getConnection();
     const result = await pool.request()
-      .input('rowId', sql.Int, rowId)
       .input('descDispositivo', sql.VarChar, descDispositivo)
       .input('tipoConexion', sql.VarChar, tipoConexion)
-      .query('INSERT INTO [Combustible].[dbo].[Dispositivos] (ID, DescDispositivo, TipoConexion) VALUES (@rowId, @descDispositivo, @tipoConexion)');
+      .query('INSERT INTO [Combustible].[dbo].[Dispositivos] (DescDispositivo, TipoConexion) OUTPUT INSERTED.ID VALUES (@descDispositivo, @tipoConexion)');
 
-    res.status(200).json({
-      message: result,
-      result: res
-    });
+      const nuevoRowId = result.recordset[0].ID;
+
+      res.status(201).json({
+        message: 'Registro exitoso',
+        rowId: nuevoRowId
+      });
 
   } catch (err) {
     console.error('Error al autenticar al usuario:', err);

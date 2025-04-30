@@ -12,14 +12,19 @@ const registrarMedir = async (req, res) => {
 
   try {
     const pool = await getConnection();
-    await pool.request()
+    const result = await pool.request()
       .input('cms', sql.Int, dataBody.cms)
       .input('fecha', sql.DateTime, dataBody.fecha)
       .input('bomba', sql.TinyInt, dataBody.bomba)
       .input('usuario', sql.Int, dataBody.usuario)
-      .query('INSERT INTO [Combustible].[dbo].[Mediciones] (Cms, Fecha, Bomba, Usuario) VALUES (@cms, @fecha, @bomba, @usuario)');
+      .query('INSERT INTO [Combustible].[dbo].[Mediciones] (Cms, Fecha, Bomba, Usuario) OUTPUT INSERTED.Id  VALUES (@cms, @fecha, @bomba, @usuario)');
     
-    return res.status(201).json({ message: 'Registro exitoso' });
+      const nuevoRowId = result.recordset[0].Id;
+
+      res.status(201).json({
+        message: 'Registro exitoso',
+        rowId: nuevoRowId
+      });
   
   } catch (error) {
     console.error('Error al registrar la medida:', error);
